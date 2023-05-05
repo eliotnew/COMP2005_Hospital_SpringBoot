@@ -15,9 +15,9 @@ public class EliotComp2005Cw2Application {
 		System.out.println("Hello world!");
 		//MyMenu frame = new MyMenu();
 
-//		FindPatientByStaff finder = new FindPatientByStaff();
-//		List<Integer> admissionIDs = finder.findPatients(4);
-//		System.out.println(admissionIDs);
+		FindPatientByStaff finder = new FindPatientByStaff();
+		List<Integer> admissionIDs = finder.findPatients(4);
+		System.out.println(admissionIDs);
 
 		//Im not sure that the return types will be easy to test...
 //		FindBusiestDay findDay = new FindBusiestDay();
