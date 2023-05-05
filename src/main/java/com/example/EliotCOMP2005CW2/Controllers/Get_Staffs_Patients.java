@@ -13,11 +13,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.swing.*;
 import java.io.Console;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 @RestController
 public class Get_Staffs_Patients {
@@ -31,7 +30,11 @@ public class Get_Staffs_Patients {
             //Creates a List of Admission IDs
             List<Integer> patientsAdmissions = createAdmissionIDList(theAllocations, id);
 
-            //needs to use this list to GET Patient Ids from the admission table
+            //Creates a List of Patients
+            List<Integer> patientIDs = getPatientIDWithAdmissionID(patientsAdmissions);
+
+            //Ensures that there are no duplicates in the list as there is a many to one relationship between admissions and patient.
+            List<Integer> yourPatients = RemoveDuplicates(patientIDs);
 
             return yourPatients;
         }
@@ -53,7 +56,6 @@ public class Get_Staffs_Patients {
 
             HttpResponse response = client.execute(request);
             String responseBody = EntityUtils.toString(response.getEntity());
-
 
             // Make an array of gson objects from the JSon response using my model "Allocation"
             Gson gson = new Gson();
@@ -82,6 +84,45 @@ public class Get_Staffs_Patients {
 
         // Return the list of patients that have the same staff member given.
         return admissionIDs;
+
+    }
+
+    private List<Integer> getPatientIDWithAdmissionID(List<Integer> admission_ids){
+
+        //Using the list of admissionIds we can get the patientsId from the admission
+
+        String url = "https://web.socem.plymouth.ac.uk/COMP2005/api/Admissions/";
+        HttpClient client = HttpClientBuilder.create().build();
+
+        List<Integer> patientIDs = new ArrayList<>();
+
+        for (Integer admission_id :admission_ids) {
+            //apache get by ID
+            try {
+                HttpGet request = new HttpGet(url + admission_id);
+                HttpResponse response = client.execute(request);
+                String responseBody = EntityUtils.toString(response.getEntity());
+
+                Gson gson = new Gson();
+                Admission admission = gson.fromJson(responseBody, Admission.class);
+                //using the getter from my admission class i collect the patient ID
+                int patientID = admission.getPatientID();
+                patientIDs.add(patientID);
+
+            }catch (Exception e){
+                patientIDs.add(-999);
+            }
+
+        }
+        return patientIDs;
+    }
+
+    private List<Integer> RemoveDuplicates(List<Integer> patient_ids){
+        //I dont really understand how but apparently list to set to list can remove dupes
+        Set<Integer> toSet = new LinkedHashSet<>(patient_ids);
+        List<Integer> removedDupes = new ArrayList<>(toSet);
+
+        return removedDupes;
 
     }
 

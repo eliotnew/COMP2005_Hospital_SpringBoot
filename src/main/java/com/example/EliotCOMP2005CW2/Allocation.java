@@ -4,7 +4,6 @@ public class Allocation {
     /*
         This is a model to be used for the response bodies
      */
-
     private int id;
     private int admissionID;
     private int employeeID;
