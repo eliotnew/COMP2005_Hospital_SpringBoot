@@ -64,6 +64,48 @@ public class Get_Staffs_Patients {
 
 
     }
+    private Allocation[] getAllocations(){
+        String url = "https://web.socem.plymouth.ac.uk/COMP2005/api/Allocations";
+
+        // apache http client gets the whole table
+        HttpClient client = HttpClientBuilder.create().build();
+
+        try {
+            HttpGet request = new HttpGet(url);
+
+            HttpResponse response = client.execute(request);
+            String responseBody = EntityUtils.toString(response.getEntity());
+
+
+            // Make an array of gson objects from the JSon response using my model "Allocation"
+            Gson gson = new Gson();
+            Allocation[] allocations = gson.fromJson(responseBody, Allocation[].class);
+
+            return allocations;
+        }catch (Exception e){
+            System.out.println("error connecting to the api to fetch the allocation table data");
+            return new Allocation[0];
+        }
+
+    }
+
+    private List<Integer> createPatientList(Allocation[] data , int id){
+
+        // list to store the patients by their admissionIDs
+        List<Integer> admissionIDs = new ArrayList<>();
+
+        // for Loop through each object in the array staff member given staff member in the object
+        for (Allocation allocation : data) {
+            if (allocation.getEmployeeID() == id) {
+                // If the same, adds patient to list.
+                admissionIDs.add(allocation.getAdmissionID());
+            }
+        }
+
+        // Return the list of patients that have the same staff member given.
+        return admissionIDs;
+
+    }
 
 
 }
