@@ -1,4 +1,8 @@
-package com.example.EliotCOMP2005CW2;
+package com.example.EliotCOMP2005CW2.Controllers;
+
+import com.example.EliotCOMP2005CW2.Admission;
+import com.example.EliotCOMP2005CW2.Allocation;
+import com.example.EliotCOMP2005CW2.averagePatientDurationByStaff;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -7,36 +11,47 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RestController;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.time.*;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
-public class averagePatientDurationByStaff {
+@RestController
+public class Average_Duration_By_Staff {
+    @GetMapping("/duration/{id}")
+    public String getAverageDurationByStaff(@PathVariable int id) {
 
-
-    public  averagePatientDurationByStaff(int employeeID) {
         /*
-            The constructor will return average hours by employee staff.
+            The Function will return a string average hours by employee staff.
             First It takes the employee ID, gets all admission IDS linked to it, then loops through the admission IDS
             to collect the mean/average stay in hours and return.
+
+            It has been transferred and slightly adapted from my old project.
          */
-
-
+        String answer = "Variable not set";
         try{
-            List<Integer> admissionIDs = findAdmissionIDsByEmployeeID(employeeID);
+            List<Integer> admissionIDs = findAdmissionIDsByEmployeeID(id);
             List<Double> stayDurations = collectStayDurations(admissionIDs);
             Double meanStayDuration = showAverageHours(stayDurations);
-            System.out.println("The mean stay duration for employee ID " + employeeID + " is " + meanStayDuration + " hours.");
+            answer = "The mean stay duration for employee ID " + id + " is " + meanStayDuration + " hours.";
 
         }catch (IOException e){
             System.out.println("ERROR Something went wrong");
-            return;
+            answer = "ERROR Something went wrong";
 
         };
+        return answer;
     }
+
+    //the functions would go here
 
     private List<Integer> findAdmissionIDsByEmployeeID(int employeeID) throws IOException {
            /*
@@ -75,8 +90,9 @@ public class averagePatientDurationByStaff {
            It does a for loop through the list performing a get by ID to the admissions endpoint to produce a list of stay duration in hours.
 
          */
-        String API_URL_Admissions = "https://web.socem.plymouth.ac.uk/COMP2005/api/Admissions";
+
         List<Double> stayDurations = new ArrayList<>(); // A list to store in hours how long the stays are in the admission bodies
+        String API_URL_Admissions = "https://web.socem.plymouth.ac.uk/COMP2005/api/Admissions";
 
         //using a for loop during the apache get by id process
         CloseableHttpClient httpClient = HttpClientBuilder.create().build();
@@ -119,6 +135,4 @@ public class averagePatientDurationByStaff {
         double meanStay = sum/hours.size();
         return meanStay;
     }
-
 }
-
