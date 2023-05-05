@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.Console;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -23,46 +24,23 @@ public class Get_Staffs_Patients {
 
     @GetMapping("/getmypatients/{id}")
     public List<Integer> Get_Staffs_Patients(@PathVariable int id) {
-
-        String url = "https://web.socem.plymouth.ac.uk/COMP2005/api/Allocations";
-
-        //Imported the apache http client from my orignal program to save time
-        HttpClient client = HttpClientBuilder.create().build();
-        HttpGet request = new HttpGet(url);
-
         try {
-            HttpResponse response = client.execute(request);
-            String responseBody = EntityUtils.toString(response.getEntity());
-            Gson gson = new Gson();
+            //Creates an array of models from a GET
+            Allocation[] theAllocations = getAllocations();
 
-            // Make an array of gson objects from the JSon response using my model "Allocation"
-            Allocation[] allocations = gson.fromJson(responseBody, Allocation[].class);
+            //Creates a List of Admission IDs
+            List<Integer> patientsAdmissions = createAdmissionIDList(theAllocations, id);
 
-            // list to store the patients by their admissionIDs
-            List<Integer> admissionIDs = new ArrayList<>();
+            //needs to use this list to GET Patient Ids from the admission table
 
-            // for Loop through each object in the array staff member given staff member in the object
-            for (Allocation allocation : allocations) {
-                if (allocation.getEmployeeID() == id) {
-                    // If the same, adds patient to list.
-                    admissionIDs.add(allocation.getAdmissionID());
-                }
-            }
-
-            // Return the list of patients that have the same staff member given.
-            return admissionIDs;
-
-        } catch (IOException e) {
-            System.err.println("Error executing get request. " + e.getMessage());
-
-            //I am returning a dummy value in case of a fail, it will return a list containing "-1"
-            int size = 1;
-            List<Integer> failList = new ArrayList<>(Collections.nCopies(size, -1));
-
+            return yourPatients;
+        }
+        catch (Exception e){
+            System.out.println("Went wrong!");
+            List<Integer> failList = new ArrayList<>();
+            failList.add(-999);
             return failList;
         }
-
-
     }
     private Allocation[] getAllocations(){
         String url = "https://web.socem.plymouth.ac.uk/COMP2005/api/Allocations";
@@ -89,7 +67,7 @@ public class Get_Staffs_Patients {
 
     }
 
-    private List<Integer> createPatientList(Allocation[] data , int id){
+    private List<Integer> createAdmissionIDList(Allocation[] data , int id){
 
         // list to store the patients by their admissionIDs
         List<Integer> admissionIDs = new ArrayList<>();
