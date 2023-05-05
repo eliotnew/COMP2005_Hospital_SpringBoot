@@ -69,10 +69,11 @@ public class Average_Duration_By_Staff {
         JsonParser jsonParser = new JsonParser();
         JsonArray allocationsArray = jsonParser.parse(reader).getAsJsonArray();
         Gson gson = new Gson();
+
         for (JsonElement allocationElement : allocationsArray) {
             Allocation allocation = gson.fromJson(allocationElement, Allocation.class);
 
-            // Step 3: Filter allocations by employee ID and add admission ID integer to list
+            //  if  employee ID is a match, add the admission ID integer to list
             if (allocation.getEmployeeID() == employeeID) {
                 admissionIDs.add(allocation.getAdmissionID());
             }
@@ -124,11 +125,9 @@ public class Average_Duration_By_Staff {
         double sum = 0;
 
         for (double period:hours) {
-            sum+=period; //calculate mean?
-
-
+            sum+=period;
         }
-        double meanStay = sum/hours.size();
+        double meanStay = sum/hours.size(); //average stay
         return meanStay;
     }
 }
