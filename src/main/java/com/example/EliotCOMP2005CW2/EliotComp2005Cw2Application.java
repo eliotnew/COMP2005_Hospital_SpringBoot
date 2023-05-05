@@ -3,12 +3,13 @@ package com.example.EliotCOMP2005CW2;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import java.io.IOException;
 import java.util.List;
 
 @SpringBootApplication
 public class EliotComp2005Cw2Application {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		SpringApplication.run(EliotComp2005Cw2Application.class, args);
 
 		System.out.println("Hello world!");
@@ -19,9 +20,9 @@ public class EliotComp2005Cw2Application {
 		System.out.println(admissionIDs);
 
 		//Im not sure that the return types will be easy to test...
-		FindBusiestDay findDay = new FindBusiestDay();
-		String egg = findDay.findBusiestDay();
-		System.out.println(egg);
+//		FindBusiestDay findDay = new FindBusiestDay();
+//		String egg = findDay.findBusiestDay();
+//		System.out.println(egg);
 
 		FindWithin3DayDischarge shortStay = new FindWithin3DayDischarge();
 		List<Integer> shortStays = shortStay.findWithin3DayDischarge();

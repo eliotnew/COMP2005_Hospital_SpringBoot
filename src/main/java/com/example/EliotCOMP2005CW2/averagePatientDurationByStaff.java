@@ -37,10 +37,6 @@ public class averagePatientDurationByStaff {
             return;
 
         };
-
-
-
-
     }
 
     private List<Integer> findAdmissionIDsByEmployeeID(int employeeID) throws IOException {
