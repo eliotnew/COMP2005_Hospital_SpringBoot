@@ -24,73 +24,168 @@ public class Busiest_Day_Controller {
 
     @GetMapping("/busiestday")
     public String busiestDay(){
-        String url = "https://web.socem.plymouth.ac.uk/COMP2005/api/Admissions";
-
-        HttpClient client = HttpClientBuilder.create().build();
-        HttpGet request = new HttpGet(url);
-
+//        String url = "https://web.socem.plymouth.ac.uk/COMP2005/api/Admissions";
+//
+//        HttpClient client = HttpClientBuilder.create().build();
+//        HttpGet request = new HttpGet(url);
+//
+//        try {
+//            HttpResponse response = client.execute(request);
+//            String responseBody = EntityUtils.toString(response.getEntity());
+//            Gson gson = new Gson();
+//
+//            // Make an array of gson objects from the JSon response
+//            Admission[] admissions = gson.fromJson(responseBody, Admission[].class);
+//
+//            // Hashmap that works as a tally chart counting days.
+//            Map<DayOfWeek, Integer> dayTally = new HashMap<>();
+//
+//            // for looping each admission gson object , calculating day and tallying in hashmap.
+//            for (Admission admission : admissions) {
+//
+//                LocalDate admission_Date = LocalDate.parse(admission.getAdmissionDate(), DateTimeFormatter.ISO_DATE_TIME);
+//
+//                //conviniently java can do the hard work for me! :)
+//                DayOfWeek dayOfWeek = admission_Date.getDayOfWeek();
+//
+//                //defaulting to 0 if the key isnt found, I increment the day by one in the tally chart (hashmap)
+//                dayTally.put(dayOfWeek, dayTally.getOrDefault(dayOfWeek, 0) + 1);
+//            }
+//
+//            //bool to decide whether i return one or several days.
+//            boolean moreThanOne = false;
+//            String multiDays = " ";
+//
+//            //The answer's number of tally scores
+//            int mostDays = dayTally.entrySet().stream().max(Map.Entry.comparingByValue()).get().getValue();
+//            int numDaysWithHighestCount = 0;
+//
+//            //a for loop iterating through the tally chart hash map that will let us know if we have multiple answers as well as create a big string containing n days
+//            for (Map.Entry<DayOfWeek, Integer> entry : dayTally.entrySet()) {
+//                if (entry.getValue() == mostDays) {
+//                    numDaysWithHighestCount++;
+//                    multiDays += entry.getKey().getDisplayName(TextStyle.FULL, Locale.UK);
+//                    multiDays += " ";
+//                }
+//            }
+//            //if we have multiple answers
+//            if (numDaysWithHighestCount > 1) {
+//                moreThanOne = true;
+//            }
+//
+//            // calculates the busiest day from within the hashpmap by comparison.
+//            //This is an enum and not yet usable as string
+//            DayOfWeek busiestDay = dayTally.entrySet().stream().max(Map.Entry.comparingByValue()).get().getKey();
+//
+//
+//            if (moreThanOne == true) {
+//                return "There is a joint tie for busiest days: " + multiDays;
+//            } else {
+//                // Return the name of the busiest day (e.g. "Monday")
+//                String answer = busiestDay.getDisplayName(TextStyle.FULL, java.util.Locale.UK);
+//
+//                return "Busiest day of the week for admissions is " + answer + " . ";
+//            }
+//
+//        } catch (IOException e) {
+//            System.err.println(" error calling get request . " + e.getMessage());
+//            return "Something Went wrong.";
+//        }
         try {
-            HttpResponse response = client.execute(request);
-            String responseBody = EntityUtils.toString(response.getEntity());
-            Gson gson = new Gson();
+            //Gets admissions
+            Admission[] admissions = getAdmissionsFromApi();
 
-            // Make an array of gson objects from the JSon response
-            Admission[] admissions = gson.fromJson(responseBody, Admission[].class);
+            //creates a tally chart in a hasmap
+            Map<DayOfWeek, Integer> dayTally = getDayTally(admissions);
 
-            // Hashmap that works as a tally chart counting days.
-            Map<DayOfWeek, Integer> dayTally = new HashMap<>();
+            //determines how many days we will return if its one or several answers
+            boolean moreThanOne = hasMultipleBusiestDays(dayTally);
 
-            // for looping each admission gson object , calculating day and tallying in hashmap.
-            for (Admission admission : admissions) {
 
-                LocalDate admission_Date = LocalDate.parse(admission.getAdmissionDate(), DateTimeFormatter.ISO_DATE_TIME);
-
-                //conviniently java can do the hard work for me! :)
-                DayOfWeek dayOfWeek = admission_Date.getDayOfWeek();
-
-                //defaulting to 0 if the key isnt found, I increment the day by one in the tally chart (hashmap)
-                dayTally.put(dayOfWeek, dayTally.getOrDefault(dayOfWeek, 0) + 1);
+            if(moreThanOne==true){
+                String busiestDaysStr = determineAllBusyDays(dayTally);
+                return "There is a joint Tie for busiest Admission days:"+busiestDaysStr;
             }
-
-            //bool to decide whether i return one or several days.
-            boolean moreThanOne = false;
-            String multiDays = " ";
-
-            //The answer's number of tally scores
-            int mostDays = dayTally.entrySet().stream().max(Map.Entry.comparingByValue()).get().getValue();
-            int numDaysWithHighestCount = 0;
-
-            //a for loop iterating through the tally chart hash map that will let us know if we have multiple answers as well as create a big string containing n days
-            for (Map.Entry<DayOfWeek, Integer> entry : dayTally.entrySet()) {
-                if (entry.getValue() == mostDays) {
-                    numDaysWithHighestCount++;
-                    multiDays += entry.getKey().getDisplayName(TextStyle.FULL, Locale.UK);
-                    multiDays += " ";
-                }
+            else{
+                String busiestDayStr = determineBusiestDay(dayTally);
+                return "Busiest day of the week is "+busiestDayStr;
             }
-            //if we have multiple answers
-            if (numDaysWithHighestCount > 1) {
-                moreThanOne = true;
-            }
-
-            // calculates the busiest day from within the hashpmap by comparison.
-            //This is an enum and not yet usable as string
-            DayOfWeek busiestDay = dayTally.entrySet().stream().max(Map.Entry.comparingByValue()).get().getKey();
-
-
-            if (moreThanOne == true) {
-                return "There is a joint tie for busiest days: " + multiDays;
-            } else {
-                // Return the name of the busiest day (e.g. "Monday")
-                String answer = busiestDay.getDisplayName(TextStyle.FULL, java.util.Locale.UK);
-
-                return "Busiest day of the week for admissions is " + answer + " . ";
-            }
-
         } catch (IOException e) {
             System.err.println(" error calling get request . " + e.getMessage());
             return "Something Went wrong.";
         }
 
+    }
+
+    private Admission[] getAdmissionsFromApi() throws IOException {
+        // Uses the admissions model to build an array of admission gson objects
+
+        String url = "https://web.socem.plymouth.ac.uk/COMP2005/api/Admissions";
+
+        HttpClient client = HttpClientBuilder.create().build();
+        HttpGet request = new HttpGet(url);
+
+        HttpResponse response = client.execute(request);
+        String responseBody = EntityUtils.toString(response.getEntity());
+
+        Gson gson = new Gson();
+        Admission[] admissions = gson.fromJson(responseBody, Admission[].class);
+
+        return admissions;
+    }
+
+    private Map<DayOfWeek, Integer> getDayTally(Admission[] admissions) {
+        //Creates a hashmap of days of the week and how many tally scores
+
+        Map<DayOfWeek, Integer> dayTally = new HashMap<>();
+
+        for (Admission admission : admissions) {
+
+            LocalDate admission_Date = LocalDate.parse(admission.getAdmissionDate(), DateTimeFormatter.ISO_DATE_TIME);
+
+            //put a score for each day type into the hashmap
+            DayOfWeek dayOfWeek = admission_Date.getDayOfWeek();
+            dayTally.put(dayOfWeek, dayTally.getOrDefault(dayOfWeek, 0) + 1);
+        }
+        return dayTally;
+    }
+
+    private int getMostDays(Map<DayOfWeek, Integer> dayTally) {
+        //returns the count of the most days
+        return dayTally.entrySet().stream().max(Map.Entry.comparingByValue()).get().getValue();
+    }
+
+    private boolean hasMultipleBusiestDays(Map<DayOfWeek, Integer> dayTally) {
+        int mostDays = dayTally.entrySet().stream().max(Map.Entry.comparingByValue()).get().getValue();
+
+        int numDaysWithHighestCount = 0;
+        for (Map.Entry<DayOfWeek, Integer> entry : dayTally.entrySet()) {
+            if (entry.getValue() == mostDays) {
+                numDaysWithHighestCount++;
+            }
+        }
+
+        return numDaysWithHighestCount > 1;
+    }
+
+    private String determineBusiestDay(Map<DayOfWeek, Integer> dayTally) {
+        DayOfWeek busiestDay = dayTally.entrySet().stream().max(Map.Entry.comparingByValue()).get().getKey();
+        return busiestDay.getDisplayName(TextStyle.FULL, Locale.UK);
+    }
+
+    private String determineAllBusyDays(Map<DayOfWeek, Integer> dayTally){
+        //Should only be called if there are multiple days
+        String days = "";
+        // checks if it has the same value as the joint modal day value
+        int mostDays = dayTally.entrySet().stream().max(Map.Entry.comparingByValue()).get().getValue();
+
+        for (Map.Entry<DayOfWeek, Integer> entry : dayTally.entrySet()) {
+            if (entry.getValue() == mostDays) {
+
+                days += entry.getKey().getDisplayName(TextStyle.FULL, Locale.UK);
+                days += " ";
+            }
+        }
+        return days;
     }
 }
