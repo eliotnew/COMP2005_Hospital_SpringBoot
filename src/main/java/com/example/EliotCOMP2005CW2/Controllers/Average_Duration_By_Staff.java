@@ -29,18 +29,16 @@ public class Average_Duration_By_Staff {
     @GetMapping("/duration/{id}")
     public String getAverageDurationByStaff(@PathVariable int id) {
 
-        /*
-            The Function will return a string average hours by employee staff.
-            First It takes the employee ID, gets all admission IDS linked to it, then loops through the admission IDS
-            to collect the mean/average stay in hours and return.
 
-            It has been transferred and slightly adapted from my old project.
-         */
         String answer = "Variable not set";
         try{
-            List<Integer> admissionIDs = findAdmissionIDsByEmployeeID(id);
-            List<Double> stayDurations = collectStayDurations(admissionIDs);
-            Double meanStayDuration = showAverageHours(stayDurations);
+
+            List<Integer> admissionIDs = findAdmissionIDsByEmployeeID(id); //Finds all admissions linked to staff ID
+
+            List<Double> stayDurations = collectStayDurations(admissionIDs); //Collects list of stay durations
+
+            Double meanStayDuration = showAverageHours(stayDurations); //Calculate average stay in hours
+
             answer = "The mean stay duration for employee ID " + id + " is " + meanStayDuration + " hours.";
 
         }catch (IOException e){
@@ -50,8 +48,6 @@ public class Average_Duration_By_Staff {
         };
         return answer;
     }
-
-    //the functions would go here
 
     private List<Integer> findAdmissionIDsByEmployeeID(int employeeID) throws IOException {
            /*
