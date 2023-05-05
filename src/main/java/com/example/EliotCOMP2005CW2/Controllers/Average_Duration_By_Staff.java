@@ -2,7 +2,6 @@ package com.example.EliotCOMP2005CW2.Controllers;
 
 import com.example.EliotCOMP2005CW2.Admission;
 import com.example.EliotCOMP2005CW2.Allocation;
-import com.example.EliotCOMP2005CW2.averagePatientDurationByStaff;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -35,11 +34,16 @@ public class Average_Duration_By_Staff {
 
             List<Integer> admissionIDs = findAdmissionIDsByEmployeeID(id); //Finds all admissions linked to staff ID
 
-            List<Double> stayDurations = collectStayDurations(admissionIDs); //Collects list of stay durations
+            if (admissionIDs.size()!=0){
+                List<Double> stayDurations = collectStayDurations(admissionIDs); //Collects list of stay durations
 
-            Double meanStayDuration = showAverageHours(stayDurations); //Calculate average stay in hours
+                Double meanStayDuration = showAverageHours(stayDurations); //Calculate average stay in hours
 
-            answer = "The mean stay duration for employee ID " + id + " is " + meanStayDuration + " hours.";
+                answer = "The average duration a patient stays for staff ID " + id + " is " + meanStayDuration + " hours.";
+
+            }
+            else {return "The Employer ("+id+") hasn't treated any patients yet, please try another ID";}
+
 
         }catch (IOException e){
             System.out.println("ERROR Something went wrong");
@@ -107,7 +111,7 @@ public class Average_Duration_By_Staff {
 
             // Calculate stay duration and add to list
 
-            //formatting the date
+            //formatting the date so that stay duration is calculated
             LocalDateTime admissionDate = LocalDateTime.parse(admission.getAdmissionDate(), DateTimeFormatter.ISO_DATE_TIME);
             LocalDateTime dischargeDate = LocalDateTime.parse(admission.getDischargeDate(), DateTimeFormatter.ISO_DATE_TIME);
 
