@@ -6,10 +6,13 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.util.EntityUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,12 +30,13 @@ import java.util.List;
 public class Average_Duration_By_Staff {
     @GetMapping("/duration/{id}")
     public String getAverageDurationByStaff(@PathVariable int id) {
-
-
+        String API_URL_Allocations = "https://web.socem.plymouth.ac.uk/COMP2005/api/Allocations";
         String answer = "Variable not set";
-        try{
 
-            List<Integer> admissionIDs = findAdmissionIDsByEmployeeID(id); //Finds all admissions linked to staff ID
+        try{
+            Allocation[] allocations = getAllocations(API_URL_Allocations); //Gets all allocations
+
+            List<Integer> admissionIDs = getAdmissionIdsFromEmployeeID(id,allocations);//Finds all admissions linked to staff ID
 
             if (admissionIDs.size()!=0){
                 List<Double> stayDurations = collectStayDurations(admissionIDs); //Collects list of stay durations
@@ -53,37 +57,40 @@ public class Average_Duration_By_Staff {
         return answer;
     }
 
-    private List<Integer> findAdmissionIDsByEmployeeID(int employeeID) throws IOException {
-           /*
-            THis function creates a list of admission ids from the employee inorder to collect the duration information from the admissions endpoint
-            */
-        String API_URL_Allocations = "https://web.socem.plymouth.ac.uk/COMP2005/api/Allocations";
+
+    public Allocation[] getAllocations(String allocationURL){
 
 
+        // apache http client gets the whole table
+        HttpClient client = HttpClientBuilder.create().build();
+
+        try {
+            HttpGet request = new HttpGet(allocationURL);
+
+            HttpResponse response = client.execute(request);
+            String responseBody = EntityUtils.toString(response.getEntity());
+
+            // Make an array of gson objects from the JSon response using my model "Allocation"
+            Gson gson = new Gson();
+            Allocation[] allocations = gson.fromJson(responseBody, Allocation[].class);
+
+            return allocations;
+        }catch (Exception e){
+            System.out.println("error connecting to the api to fetch the allocation table data");
+            return new Allocation[0];
+        }
+
+    }
+    public List<Integer> getAdmissionIdsFromEmployeeID(int employeeID, Allocation[] allocations) {
         List<Integer> admissionIDs = new ArrayList<>();
-
-        //  GET request on the Allocations endpoint by employee ID to retrieve all admission IDs
-        CloseableHttpClient httpClient = HttpClientBuilder.create().build();
-        HttpGet request = new HttpGet(API_URL_Allocations);
-        request.addHeader("accept", "application/json");
-        CloseableHttpResponse response = httpClient.execute(request);
-
-        // GSON List-ifying responses
-        BufferedReader reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
-        JsonParser jsonParser = new JsonParser();
-        JsonArray allocationsArray = jsonParser.parse(reader).getAsJsonArray();
-        Gson gson = new Gson();
-
-        for (JsonElement allocationElement : allocationsArray) {
-            Allocation allocation = gson.fromJson(allocationElement, Allocation.class);
-
-            //  if  employee ID is a match, add the admission ID integer to list
+        for (Allocation allocation : allocations) {
             if (allocation.getEmployeeID() == employeeID) {
                 admissionIDs.add(allocation.getAdmissionID());
             }
         }
         return admissionIDs;
     }
+
 
     public List<Double> collectStayDurations(List<Integer> admissionIDs) throws IOException {
         /*
@@ -109,22 +116,30 @@ public class Average_Duration_By_Staff {
             Gson gson = new Gson();
             Admission admission = gson.fromJson(admissionElement, Admission.class);
 
-            // Calculate stay duration and add to list
-
-            //formatting the date so that stay duration is calculated
-            LocalDateTime admissionDate = LocalDateTime.parse(admission.getAdmissionDate(), DateTimeFormatter.ISO_DATE_TIME);
-            LocalDateTime dischargeDate = LocalDateTime.parse(admission.getDischargeDate(), DateTimeFormatter.ISO_DATE_TIME);
-
-            //Using the java.time library to calculate the time span
-            Duration duration = Duration.between(admissionDate, dischargeDate);
-            //adjust to hours because the default is seconds and nanoseconds which would probably not pass the functional test.
-            //because why would anyone need to know that?
-            double stayDurationInHours = (double) duration.getSeconds() / (60 * 60);
+            double stayDurationInHours = calculateStayDurationHours(admission);
             stayDurations.add(stayDurationInHours);
         }
 
         return stayDurations;
     }
+
+
+    public Double calculateStayDurationHours(Admission admission){
+        //formatting the date so that stay duration is calculated
+        LocalDateTime admissionDate = LocalDateTime.parse(admission.getAdmissionDate(), DateTimeFormatter.ISO_DATE_TIME);
+        LocalDateTime dischargeDate = LocalDateTime.parse(admission.getDischargeDate(), DateTimeFormatter.ISO_DATE_TIME);
+
+        //Using the java.time library to calculate the time span
+        Duration duration = Duration.between(admissionDate, dischargeDate);
+        //adjust to hours because the default is seconds and nanoseconds which would probably not pass the functional test.
+        //because why would anyone need to know that?
+        double stayDurationInHours = (double) duration.getSeconds() / (60 * 60);
+
+        return stayDurationInHours;
+
+    }
+
+
     public Double showAverageHours (List<Double> hours){
         double sum = 0.0;
         double meanStay = 0.0;
