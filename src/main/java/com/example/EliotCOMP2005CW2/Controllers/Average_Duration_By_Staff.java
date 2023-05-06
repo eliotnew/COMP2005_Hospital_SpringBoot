@@ -85,7 +85,7 @@ public class Average_Duration_By_Staff {
         return admissionIDs;
     }
 
-    private List<Double> collectStayDurations(List<Integer> admissionIDs) throws IOException {
+    public List<Double> collectStayDurations(List<Integer> admissionIDs) throws IOException {
         /*
             THis function takes a list of admissionIDS from the previous function and needs to be called in the constructor
            It does a for loop through the list performing a get by ID to the admissions endpoint to produce a list of stay duration in hours.
@@ -125,13 +125,19 @@ public class Average_Duration_By_Staff {
 
         return stayDurations;
     }
-    private Double showAverageHours (List<Double> hours){
-        double sum = 0;
+    public Double showAverageHours (List<Double> hours){
+        double sum = 0.0;
+        double meanStay = 0.0;
 
-        for (double period:hours) {
-            sum+=period;
+        if(hours.size()!=0){
+            for (double period:hours) {
+                sum+=period;
+            }
+            meanStay += sum/hours.size(); //average stay
+
         }
-        double meanStay = sum/hours.size(); //average stay
+
+
         return meanStay;
     }
 }
