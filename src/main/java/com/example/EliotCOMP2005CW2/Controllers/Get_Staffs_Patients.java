@@ -69,7 +69,7 @@ public class Get_Staffs_Patients {
 
     }
 
-    private List<Integer> createAdmissionIDList(Allocation[] data , int id){
+    public List<Integer> createAdmissionIDList(Allocation[] data , int id){
 
         // list to store the patients by their admissionIDs
         List<Integer> admissionIDs = new ArrayList<>();
@@ -87,7 +87,7 @@ public class Get_Staffs_Patients {
 
     }
 
-    private List<Integer> getPatientIDWithAdmissionID(List<Integer> admission_ids){
+    public List<Integer> getPatientIDWithAdmissionID(List<Integer> admission_ids){
 
         //Using the list of admissionIds we can get the patientsId from the admission
 
@@ -117,7 +117,7 @@ public class Get_Staffs_Patients {
         return patientIDs;
     }
 
-    private List<Integer> RemoveDuplicates(List<Integer> patient_ids){
+    public List<Integer> RemoveDuplicates(List<Integer> patient_ids){
         //I dont really understand how but apparently list to set to list can remove dupes
         Set<Integer> toSet = new LinkedHashSet<>(patient_ids);
         List<Integer> removedDupes = new ArrayList<>(toSet);
