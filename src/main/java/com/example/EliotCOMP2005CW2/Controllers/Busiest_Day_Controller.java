@@ -67,7 +67,7 @@ public class Busiest_Day_Controller {
         return admissions;
     }
 
-    private Map<DayOfWeek, Integer> getDayTally(Admission[] admissions) {
+    public Map<DayOfWeek, Integer> getDayTally(Admission[] admissions) {
         //Creates a hashmap of days of the week and how many tally scores
 
         Map<DayOfWeek, Integer> dayTally = new HashMap<>();
