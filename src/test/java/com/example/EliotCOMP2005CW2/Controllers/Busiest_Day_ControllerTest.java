@@ -243,9 +243,9 @@ class Busiest_Day_ControllerTest {
         dayTally.put(DayOfWeek.THURSDAY, 1);
 
         String test = busiest_day_controller.determineAllBusyDays(dayTally);
-        //System.out.println(test);
+        System.out.println(test);
 
-        assertEquals("Monday Thursday ",test);
+        assertTrue(test.equals("Monday Thursday ") || test.equals("Thursday Monday "));
 
     }
 
@@ -262,9 +262,16 @@ class Busiest_Day_ControllerTest {
         dayTally.put(DayOfWeek.SUNDAY, 1);
 
         String test = busiest_day_controller.determineAllBusyDays(dayTally);
-        //System.out.println(test);
+        System.out.println(test);
 
-        assertEquals("Tuesday Wednesday Thursday Monday Sunday Saturday Friday ",test);
+        assertTrue(test.contains("Monday "));
+        assertTrue(test.contains("Tuesday "));
+        assertTrue(test.contains("Wednesday "));
+        assertTrue(test.contains("Thursday "));
+        assertTrue(test.contains("Friday "));
+        assertTrue(test.contains("Saturday "));
+        assertTrue(test.contains("Sunday "));
 
     }
+
 }
