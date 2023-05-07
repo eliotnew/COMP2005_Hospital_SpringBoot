@@ -1,5 +1,7 @@
 package com.example.EliotCOMP2005CW2.Controllers;
 
+import com.example.EliotCOMP2005CW2.Admission;
+import com.example.EliotCOMP2005CW2.Allocation;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import org.junit.jupiter.api.Assertions;
@@ -27,30 +29,121 @@ class Average_Duration_By_StaffTest {
 
 
     @Test
-    void getAverageDurationByStaff() {
+    void testGetAdmissionIdsFromEmployeeID_With1(){
+        Allocation[] testAllocations = new Allocation[1];
+
+        Allocation allocation1 = new Allocation();
+        allocation1.setId(40);
+        allocation1.setAdmissionID(121);
+        allocation1.setEmployeeID(100);
+        allocation1.setStartTime("2020-11-28T16:45:00");
+        allocation1.setEndTime("2020-11-28T17:45:00");
+
+        testAllocations[0] = allocation1;
+
+        List<Integer> testList = average_duration_by_staff.getAdmissionIdsFromEmployeeID(100,testAllocations);
+
+        assertEquals(1,testList.size());
+        assertEquals(121,testList.get(0));
+
     }
 
-//    @Test
-//    void testfindAdmissionIDsByEmployeeID() throws IOException, URISyntaxException {
-//        WireMockServer wireMockServer = new WireMockServer(options().port(8080));
-//        wireMockServer.start();
-//        WireMock.configureFor("localhost", wireMockServer.port());
-//
-//        WireMock.stubFor(WireMock.get(WireMock.urlEqualTo("/some/endpoint"))
-//                .willReturn(WireMock.aResponse()
-//                        .withStatus(200)
-//                        .withBody("[\n  {\n    \"id\": 1,\n    \"admissionID\": 1,\n    \"employeeID\": 4,\n    \"startTime\": \"2020-11-28T16:45:00\",\n    \"endTime\": \"2020-11-28T23:56:00\"\n  },\n  {\n    \"id\": 2,\n    \"admissionID\": 3,\n    \"employeeID\": 4,\n    \"startTime\": \"2021-09-23T21:50:00\",\n    \"endTime\": \"2021-09-24T09:50:00\"\n  }\n]")));
-//
-//
-//        List<Integer> admissionIDs = average_duration_by_staff.findAdmissionIDsByEmployeeID(4, "http://localhost:8080/some/endpoint");
-//
-//
-//        Assertions.assertEquals(2, admissionIDs.size());
-//        Assertions.assertEquals(1, admissionIDs.get(0));
-//        Assertions.assertEquals(3, admissionIDs.get(1));
-//
-//        wireMockServer.stop();
-//    }
+    @Test
+    void testGetAdmissionIdsFromEmployeeID_WithNegative(){
+        Allocation[] testAllocations = new Allocation[1];
+
+        Allocation allocation1 = new Allocation();
+        allocation1.setId(40);
+        allocation1.setAdmissionID(-121);
+        allocation1.setEmployeeID(100);
+        allocation1.setStartTime("2020-11-28T16:45:00");
+        allocation1.setEndTime("2020-11-28T17:45:00");
+
+        testAllocations[0] = allocation1;
+
+        List<Integer> testList = average_duration_by_staff.getAdmissionIdsFromEmployeeID(100,testAllocations);
+
+        assertEquals(1,testList.size());
+        assertEquals(-121,testList.get(0));
+
+    }
+
+    @Test
+    void testGetAdmissionIdsFromEmployeeID_WithMassiveValue(){
+        Allocation[] testAllocations = new Allocation[1];
+
+        Allocation allocation1 = new Allocation();
+        allocation1.setId(40);
+        allocation1.setAdmissionID(123456789);
+        allocation1.setEmployeeID(100);
+        allocation1.setStartTime("2020-11-28T16:45:00");
+        allocation1.setEndTime("2020-11-28T17:45:00");
+
+        testAllocations[0] = allocation1;
+
+        List<Integer> testList = average_duration_by_staff.getAdmissionIdsFromEmployeeID(100,testAllocations);
+
+        assertEquals(1,testList.size());
+        assertEquals(123456789,testList.get(0));
+
+    }
+
+    @Test
+    void testGetAdmissionIdsFromEmployeeID_WithNoMatch(){
+        Allocation[] testAllocations = new Allocation[1];
+
+        Allocation allocation1 = new Allocation();
+        allocation1.setId(40);
+        allocation1.setAdmissionID(123456789);
+        allocation1.setEmployeeID(100);
+        allocation1.setStartTime("2020-11-28T16:45:00");
+        allocation1.setEndTime("2020-11-28T17:45:00");
+
+        testAllocations[0] = allocation1;
+
+        List<Integer> testList = average_duration_by_staff.getAdmissionIdsFromEmployeeID(50,testAllocations);
+
+        assertEquals(0,testList.size());
+
+    }
+
+    @Test
+    void testCalculateStayDurationHours(){
+
+        String startDate = "2020-11-28T16:45:00";
+        String finishDate = "2020-11-28T17:45:00";
+
+        Admission admissionTest = new Admission();
+
+        admissionTest.setId(1);
+        admissionTest.setPatientID(1);
+        admissionTest.setAdmissionDate(startDate);
+        admissionTest.setDischargeDate(finishDate);
+
+        double result = average_duration_by_staff.calculateStayDurationHours(admissionTest);
+
+        assertEquals(1.00,result);
+
+    }
+
+    @Test
+    void testCalculateStayDurationHours_Negative(){
+
+        String startDate = "2020-11-28T17:45:00";
+        String finishDate = "2020-11-28T16:45:00";
+
+        Admission admissionTest = new Admission();
+
+        admissionTest.setId(1);
+        admissionTest.setPatientID(1);
+        admissionTest.setAdmissionDate(startDate);
+        admissionTest.setDischargeDate(finishDate);
+
+        double result = average_duration_by_staff.calculateStayDurationHours(admissionTest);
+
+        assertEquals(-1.00,result);
+
+    }
 
 
     @Test
