@@ -15,7 +15,9 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -80,12 +82,19 @@ public class Three_Day_Discharge_Controller {
             LocalDateTime admissionDate = LocalDateTime.parse(admission.getAdmissionDate(), formatter);
             LocalDateTime dischargeDate = LocalDateTime.parse(admission.getDischargeDate(), formatter);
             Duration duration = Duration.between(admissionDate, dischargeDate);
+            long hoursDuration = duration.toHours();
+            System.out.println(hoursDuration);
 
-            long daysStay = duration.toDays();
+            Integer threeDays = 72;
+            Integer zero = 0;
+            long zeroL= zero;
+            long threeDaysLong = threeDays;
 
-            if (daysStay <= 3) {
+
+            if (hoursDuration <= threeDaysLong && hoursDuration > zeroL) {
                 patientIDs.add(admission.getPatientID());
             }
+
         }
         return patientIDs;
     }
