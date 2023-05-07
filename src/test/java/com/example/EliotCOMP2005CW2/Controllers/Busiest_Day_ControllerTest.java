@@ -90,7 +90,7 @@ class Busiest_Day_ControllerTest {
         Map<DayOfWeek,Integer> testMap = busiest_day_controller.getDayTally(testAdmissionsArray);
 
 
-        DayOfWeek dayOfWeek = DayOfWeek.SATURDAY;
+        DayOfWeek dayOfWeek = DayOfWeek.FRIDAY;
         int tally = testMap.get(dayOfWeek);
 
         assertNotNull(tally, "tally should not be null");
