@@ -66,12 +66,13 @@ public class Three_Day_Discharge_Controller {
 
     }
     public List<Integer> getShortStays(Admission[] admissions){
+        //returns list of patient IDs who stayed less than 3 days
 
         List<Integer> patientIDs  = new ArrayList<>();
         List<Admission> admissionList = Arrays.asList(admissions);
 
         //  Filter each admissions where the stay is less than or equal to 3 days
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
         for (Admission admission : admissionList) {
 
             //Gets the formatted dates per each admission entry and calculates the duration of stay in days

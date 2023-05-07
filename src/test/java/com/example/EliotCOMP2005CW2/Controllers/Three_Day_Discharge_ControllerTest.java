@@ -37,9 +37,30 @@ class Three_Day_Discharge_ControllerTest {
         assertEquals(1,testList.size());
         assertEquals(1,testList.get(0));
 
-        //for the purpose of this program i am considering a visit to the hosiptal where you are dismisssed the same day as admitted
-        // ...to be 1 day at the hospital, therefore a trip <24 hours is still a "day at hospital" bit of a cop out maybe haha
+        //returns patient ID 1
+    }
+    @Test
+    void testGetShortStay_When4Days(){
 
+        String startDate = "2020-11-24T16:45:00.744Z"; //correct time zone!!!!!!
+        String finishDate = "2020-11-28T17:45:00.744Z";
+
+        Admission admissionTest = new Admission();
+
+        admissionTest.setId(1);
+        admissionTest.setPatientID(1);
+        admissionTest.setAdmissionDate(startDate);
+        admissionTest.setDischargeDate(finishDate);
+
+        Admission[] testAdmissionsArray = new Admission[1];
+        testAdmissionsArray[0] = admissionTest;
+
+        List<Integer> testList = three_day_discharge_controller.getShortStays(testAdmissionsArray);
+
+        assertEquals(0,testList.size());
+        //assertEquals(1,testList.get(0));
+
+        //returns patient ID 1
     }
 
     @Test
@@ -88,5 +109,141 @@ class Three_Day_Discharge_ControllerTest {
         List<Integer> testList = three_day_discharge_controller.getShortStays(testAdmissionsArray);
 
         assertEquals(0,testList.size());
+    }
+    @Test
+    void testGetShortStay_TimeTraveller_Sub3Days(){
+
+        String finishDate = "2020-11-28T16:45:00";
+        String startDate = "2020-12-28T17:45:00";
+        //I've swapped the times so they have stayed for -1 day and -1 hour
+
+        Admission admissionTest = new Admission();
+
+        admissionTest.setId(1);
+        admissionTest.setPatientID(1);
+        admissionTest.setAdmissionDate(startDate);
+        admissionTest.setDischargeDate(finishDate);
+
+        Admission[] testAdmissionsArray = new Admission[1];
+        testAdmissionsArray[0] = admissionTest;
+
+        List<Integer> testList = three_day_discharge_controller.getShortStays(testAdmissionsArray);
+
+        assertEquals(1,testList.size());
+        assertEquals(1,testList.get(0));
+
+        //Time calculated duration doesnt seem to care which direction the duration is going so this is possible in my program
+
+    }
+//    @Test
+//    void testGetShortStay_TimeTraveller_MoreThan3Days(){
+//
+//        String finishDate = "2020-09-28T17:45:00";
+//        String startDate = "2020-12-28T17:45:00";
+//        //I've swapped the timesso they have stayed for -3 day and -1 hour
+//
+//        Admission admissionTest = new Admission();
+//
+//        admissionTest.setId(1);
+//        admissionTest.setPatientID(1);
+//        admissionTest.setAdmissionDate(startDate);
+//        admissionTest.setDischargeDate(finishDate);
+//
+//        Admission[] testAdmissionsArray = new Admission[1];
+//        testAdmissionsArray[0] = admissionTest;
+//
+//        List<Integer> testList = three_day_discharge_controller.getShortStays(testAdmissionsArray);
+//
+//        assertEquals(0,testList.size());
+//        //assertEquals(1,testList.get(0));
+//
+//        //Time calculated duration doesnt seem to care which direction the duration is going so this is possible in my program
+//
+//    }
+    @Test
+    void testGetShortStay_With_23_Hours(){
+
+        String startDate = "2020-11-28T23:00:00";
+        String finishDate = "2020-11-28T00:00:00";
+
+        Admission admissionTest = new Admission();
+
+        admissionTest.setId(1);
+        admissionTest.setPatientID(1);
+        admissionTest.setAdmissionDate(startDate);
+        admissionTest.setDischargeDate(finishDate);
+
+        Admission[] testAdmissionsArray = new Admission[1];
+        testAdmissionsArray[0] = admissionTest;
+
+        List<Integer> testList = three_day_discharge_controller.getShortStays(testAdmissionsArray);
+
+        assertEquals(1,testList.size());
+        assertEquals(1,testList.get(0));
+
+    }
+    @Test
+    void testGetShortStay_With_1_Min(){
+
+        String startDate = "2020-11-28T00:01:00";
+        String finishDate = "2020-11-28T00:00:00";
+
+        Admission admissionTest = new Admission();
+
+        admissionTest.setId(1);
+        admissionTest.setPatientID(1);
+        admissionTest.setAdmissionDate(startDate);
+        admissionTest.setDischargeDate(finishDate);
+
+        Admission[] testAdmissionsArray = new Admission[1];
+        testAdmissionsArray[0] = admissionTest;
+
+        List<Integer> testList = three_day_discharge_controller.getShortStays(testAdmissionsArray);
+
+        assertEquals(1,testList.size());
+        assertEquals(1,testList.get(0));
+
+    }
+    @Test
+    void testGetShortStay_With_3Days_1Hours(){
+
+        String startDate = "2020-11-01T00:00:00";
+        String finishDate = "2020-11-04T01:00:00";
+
+        Admission admissionTest = new Admission();
+
+        admissionTest.setId(1);
+        admissionTest.setPatientID(1);
+        admissionTest.setAdmissionDate(startDate);
+        admissionTest.setDischargeDate(finishDate);
+
+        Admission[] testAdmissionsArray = new Admission[1];
+        testAdmissionsArray[0] = admissionTest;
+
+        List<Integer> testList = three_day_discharge_controller.getShortStays(testAdmissionsArray);
+
+        assertEquals(1,testList.size());
+        assertEquals(1,testList.get(0));
+    }
+    @Test
+    void testGetShortStay_With_2_Days(){
+
+        String startDate = "2020-11-28T00:00:00";
+        String finishDate = "2020-11-30T00:00:00";
+
+        Admission admissionTest = new Admission();
+
+        admissionTest.setId(1);
+        admissionTest.setPatientID(1);
+        admissionTest.setAdmissionDate(startDate);
+        admissionTest.setDischargeDate(finishDate);
+
+        Admission[] testAdmissionsArray = new Admission[1];
+        testAdmissionsArray[0] = admissionTest;
+
+        List<Integer> testList = three_day_discharge_controller.getShortStays(testAdmissionsArray);
+
+        assertEquals(1,testList.size());
+        assertEquals(1,testList.get(0));
     }
 }
