@@ -2,21 +2,12 @@ package com.example.EliotCOMP2005CW2.Controllers;
 
 import com.example.EliotCOMP2005CW2.Admission;
 import com.example.EliotCOMP2005CW2.Allocation;
-import com.github.tomakehurst.wiremock.WireMockServer;
-import com.github.tomakehurst.wiremock.client.WireMock;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import javax.servlet.http.HttpServlet;
-
-
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class Average_Duration_By_StaffTest {
@@ -142,6 +133,25 @@ class Average_Duration_By_StaffTest {
         double result = average_duration_by_staff.calculateStayDurationHours(admissionTest);
 
         assertEquals(-1.00,result);
+
+    }
+
+    @Test
+    void testCalculateStayDurationHours_Massive(){
+
+        String startDate = "2020-11-28T16:45:00";
+        String finishDate = "2021-11-28T16:45:00"; //there are 8760 hours in a year
+
+        Admission admissionTest = new Admission();
+
+        admissionTest.setId(1);
+        admissionTest.setPatientID(1);
+        admissionTest.setAdmissionDate(startDate);
+        admissionTest.setDischargeDate(finishDate);
+
+        double result = average_duration_by_staff.calculateStayDurationHours(admissionTest);
+
+        assertEquals(8760.00,result); //Can calculate  a year stay
 
     }
 
