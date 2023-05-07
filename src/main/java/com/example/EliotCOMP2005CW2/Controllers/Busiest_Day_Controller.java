@@ -50,7 +50,7 @@ public class Busiest_Day_Controller {
 
     }
 
-    private Admission[] getAdmissionsFromApi() throws IOException {
+    public Admission[] getAdmissionsFromApi() throws IOException {
         // Uses the admissions model to build an array of admission gson objects
 
         String url = "https://web.socem.plymouth.ac.uk/COMP2005/api/Admissions";
@@ -83,12 +83,7 @@ public class Busiest_Day_Controller {
         return dayTally;
     }
 
-    private int getMostDays(Map<DayOfWeek, Integer> dayTally) {
-        //returns the count of the most days
-        return dayTally.entrySet().stream().max(Map.Entry.comparingByValue()).get().getValue();
-    }
-
-    private boolean hasMultipleBusiestDays(Map<DayOfWeek, Integer> dayTally) {
+    public boolean hasMultipleBusiestDays(Map<DayOfWeek, Integer> dayTally) {
         int mostDays = dayTally.entrySet().stream().max(Map.Entry.comparingByValue()).get().getValue();
 
         int numDaysWithHighestCount = 0;
@@ -101,12 +96,12 @@ public class Busiest_Day_Controller {
         return numDaysWithHighestCount > 1;
     }
 
-    private String determineBusiestDay(Map<DayOfWeek, Integer> dayTally) {
+    public String determineBusiestDay(Map<DayOfWeek, Integer> dayTally) {
         DayOfWeek busiestDay = dayTally.entrySet().stream().max(Map.Entry.comparingByValue()).get().getKey();
         return busiestDay.getDisplayName(TextStyle.FULL, Locale.UK);
     }
 
-    private String determineAllBusyDays(Map<DayOfWeek, Integer> dayTally){
+    public String determineAllBusyDays(Map<DayOfWeek, Integer> dayTally){
         //Should only be called if there are multiple days
         String days = "";
         // checks if it has the same value as the joint modal day value

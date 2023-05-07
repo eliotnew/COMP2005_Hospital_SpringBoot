@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.DayOfWeek;
+import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -95,6 +96,175 @@ class Busiest_Day_ControllerTest {
 
         assertNotNull(tally, "tally should not be null");
         assertEquals(1, tally, "tally for Monday should be 1");
+
+    }
+
+    @Test
+    public void testHasMultipleBusiestDays(){
+
+        Map<DayOfWeek, Integer> dayTally = new HashMap<>();
+        dayTally.put(DayOfWeek.MONDAY, 1);
+
+        Boolean test = busiest_day_controller.hasMultipleBusiestDays(dayTally);
+
+        assertFalse(test); //should just be one busiest day
+
+    }
+
+    @Test
+    public void testHasMultipleBusiestDays_True(){
+
+        Map<DayOfWeek, Integer> dayTally = new HashMap<>();
+        dayTally.put(DayOfWeek.MONDAY, 1);
+        dayTally.put(DayOfWeek.FRIDAY, 1);
+
+        Boolean test = busiest_day_controller.hasMultipleBusiestDays(dayTally);
+
+        assertTrue(test); //should just be one busiest day
+
+    }
+
+    @Test
+    public void testHasMultipleBusiestDays_minus(){
+
+        Map<DayOfWeek, Integer> dayTally = new HashMap<>();
+        dayTally.put(DayOfWeek.MONDAY, -1);
+        dayTally.put(DayOfWeek.FRIDAY, 1);
+
+        Boolean test = busiest_day_controller.hasMultipleBusiestDays(dayTally);
+
+        assertFalse(test); //should just be one busiest day
+
+    }
+
+    @Test
+    public void testHasMultipleBusiestDays_two_minus(){
+
+        Map<DayOfWeek, Integer> dayTally = new HashMap<>();
+        dayTally.put(DayOfWeek.MONDAY, -1);
+        dayTally.put(DayOfWeek.FRIDAY, -1);
+
+        Boolean test = busiest_day_controller.hasMultipleBusiestDays(dayTally);
+
+        assertTrue(test); //no entries values means no patients
+
+    }
+
+    @Test
+    public void testHasMultipleBusiestDays_moreThanTwo(){
+
+        Map<DayOfWeek, Integer> dayTally = new HashMap<>();
+        dayTally.put(DayOfWeek.MONDAY, 1);
+        dayTally.put(DayOfWeek.TUESDAY, 1);
+        dayTally.put(DayOfWeek.WEDNESDAY, 1);
+        dayTally.put(DayOfWeek.THURSDAY, 1);
+        dayTally.put(DayOfWeek.FRIDAY, 1);
+        dayTally.put(DayOfWeek.SATURDAY, 1);
+        dayTally.put(DayOfWeek.SUNDAY, 1);
+
+        Boolean test = busiest_day_controller.hasMultipleBusiestDays(dayTally);
+
+        assertTrue(test); //no entries values means no patients
+
+    }
+    @Test
+    public void testHasMultipleBusiestDays_massiveNumber(){
+
+        Map<DayOfWeek, Integer> dayTally = new HashMap<>();
+        dayTally.put(DayOfWeek.MONDAY, 100000);
+        dayTally.put(DayOfWeek.TUESDAY, 1);
+        dayTally.put(DayOfWeek.WEDNESDAY, 1);
+        dayTally.put(DayOfWeek.THURSDAY, 1);
+        dayTally.put(DayOfWeek.FRIDAY, 1);
+        dayTally.put(DayOfWeek.SATURDAY, 1);
+        dayTally.put(DayOfWeek.SUNDAY, 1);
+
+        Boolean test = busiest_day_controller.hasMultipleBusiestDays(dayTally);
+
+        assertFalse(test);
+
+    }
+
+    @Test
+    public void testHasMultipleBusiestDays_massiveNumbersTrue(){
+
+        Map<DayOfWeek, Integer> dayTally = new HashMap<>();
+        dayTally.put(DayOfWeek.MONDAY, 100000);
+        dayTally.put(DayOfWeek.TUESDAY, 100000);
+        dayTally.put(DayOfWeek.WEDNESDAY, 1);
+        dayTally.put(DayOfWeek.THURSDAY, 1);
+        dayTally.put(DayOfWeek.FRIDAY, 1);
+        dayTally.put(DayOfWeek.SATURDAY, 1);
+        dayTally.put(DayOfWeek.SUNDAY, 1);
+
+        Boolean test = busiest_day_controller.hasMultipleBusiestDays(dayTally);
+
+        assertTrue(test);
+    }
+
+    @Test
+    public void testDetermineBusiestDay(){
+        Map<DayOfWeek, Integer> dayTally = new HashMap<>();
+        dayTally.put(DayOfWeek.MONDAY, 1);
+
+        String test = busiest_day_controller.determineBusiestDay(dayTally);
+
+        System.out.println(test);
+        assertEquals( "Monday",test);
+    }
+    @Test
+    public void testDetermineBusiestDay_Massive (){
+        Map<DayOfWeek, Integer> dayTally = new HashMap<>();
+        dayTally.put(DayOfWeek.MONDAY, 999999999);
+
+        String test = busiest_day_controller.determineBusiestDay(dayTally);
+
+        System.out.println(test);
+        assertEquals( "Monday",test);
+
+    }
+    @Test
+    public void testDetermineBusiestDay_zero (){
+        Map<DayOfWeek, Integer> dayTally = new HashMap<>();
+        dayTally.put(DayOfWeek.MONDAY, 0);
+        dayTally.put(DayOfWeek.THURSDAY, 1);
+
+        String test = busiest_day_controller.determineBusiestDay(dayTally);
+
+        System.out.println(test);
+        assertEquals( "Thursday",test);
+    }
+
+    @Test
+    public void testDetermineAllBusiestDays (){
+
+        Map<DayOfWeek, Integer> dayTally = new HashMap<>();
+        dayTally.put(DayOfWeek.MONDAY, 1);
+        dayTally.put(DayOfWeek.THURSDAY, 1);
+
+        String test = busiest_day_controller.determineAllBusyDays(dayTally);
+        //System.out.println(test);
+
+        assertEquals("Monday Thursday ",test);
+
+    }
+
+    @Test
+    public void testDetermineAllBusiestDays_All_Days (){
+
+        Map<DayOfWeek, Integer> dayTally = new HashMap<>();
+        dayTally.put(DayOfWeek.MONDAY, 1);
+        dayTally.put(DayOfWeek.TUESDAY, 1);
+        dayTally.put(DayOfWeek.WEDNESDAY, 1);
+        dayTally.put(DayOfWeek.THURSDAY, 1);
+        dayTally.put(DayOfWeek.FRIDAY, 1);
+        dayTally.put(DayOfWeek.SATURDAY, 1);
+        dayTally.put(DayOfWeek.SUNDAY, 1);
+
+        String test = busiest_day_controller.determineAllBusyDays(dayTally);
+        //System.out.println(test);
+
+        assertEquals("Tuesday Wednesday Thursday Monday Sunday Saturday Friday ",test);
 
     }
 }
