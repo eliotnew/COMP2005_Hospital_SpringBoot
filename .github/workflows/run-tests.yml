@@ -3,8 +3,6 @@ name: Java unit tests
 on:
   push:
     branches: [ main ]
-  pull_request:
-    branches: [ main ]
 
 jobs:
   build:
@@ -29,4 +27,5 @@ jobs:
     - name: Build with Gradle
       run: ./gradlew build
 
-
+    - name: Run unit tests
+      run: yarn test
