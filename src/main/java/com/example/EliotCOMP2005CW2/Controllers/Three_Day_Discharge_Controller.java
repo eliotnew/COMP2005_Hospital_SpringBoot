@@ -65,7 +65,7 @@ public class Three_Day_Discharge_Controller {
         }
 
     }
-    private List<Integer> getShortStays(Admission[] admissions){
+    public List<Integer> getShortStays(Admission[] admissions){
 
         List<Integer> patientIDs  = new ArrayList<>();
         List<Admission> admissionList = Arrays.asList(admissions);
