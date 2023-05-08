@@ -32,15 +32,15 @@ public class Three_Day_Discharge_Controller {
         try {
 
             Admission[] admissions = getAdmissions();//Gets all admissions
-            //System.out.println(admissions);
+            System.out.println("Admissions: " + Arrays.toString(admissions));
 
             List<Integer> patientsIDs = getShortStays(admissions); // Sorts through them retreiving IDs of patients with a short stay
-            //System.out.println(patientsIDs);
+            System.out.println("Short Stays: " + patientsIDs);
 
             return patientsIDs;
 
         }catch(Exception e ){
-            System.out.println("Went wrong");
+            System.out.println("error " + e.getMessage());
             int size = 1;
             List<Integer> failList = new ArrayList<>(Collections.nCopies(size, -1));
 
