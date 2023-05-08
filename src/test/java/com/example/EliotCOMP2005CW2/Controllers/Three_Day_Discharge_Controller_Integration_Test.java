@@ -35,20 +35,16 @@ public class Three_Day_Discharge_Controller_Integration_Test {
         Admission[] mockAdmissionsArray = new Admission[1];
         mockAdmissionsArray[0] = admissionTest;
 
-        //Instantiating a mock version of the class
+        // Create a mock Three_Day_Discharge_Controller
         Three_Day_Discharge_Controller three_day_discharge_controller = mock(Three_Day_Discharge_Controller.class);
+        doReturn(mockAdmissionsArray).when(three_day_discharge_controller).getAdmissions();
 
-        //Telling it to return the mock Admission[] instead of actually retrieving an array
-        doReturn(mockAdmissionsArray).when(three_day_discharge_controller.getAdmissions());
+        // Call the method that returns a list of patient IDs
+        List<Integer> patientIds = three_day_discharge_controller.getPatients3Days();
 
-        List<Integer> mockResults = three_day_discharge_controller.getPatients3Days();
         // Assert that the list contains only the expected patient ID of 1 and has a size of 1
-        assertEquals(1, mockResults.size());
-        assertTrue(mockResults.contains(1));
-
-
-
-
+        assertEquals(1, patientIds.size());
+        assertEquals(1,patientIds.get(0).intValue());
     }
 
     @AfterEach

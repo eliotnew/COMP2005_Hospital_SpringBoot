@@ -32,8 +32,10 @@ public class Three_Day_Discharge_Controller {
         try {
 
             Admission[] admissions = getAdmissions();//Gets all admissions
+            //System.out.println(admissions);
 
             List<Integer> patientsIDs = getShortStays(admissions); // Sorts through them retreiving IDs of patients with a short stay
+            //System.out.println(patientsIDs);
 
             return patientsIDs;
 
@@ -83,7 +85,7 @@ public class Three_Day_Discharge_Controller {
             LocalDateTime dischargeDate = LocalDateTime.parse(admission.getDischargeDate(), formatter);
             Duration duration = Duration.between(admissionDate, dischargeDate);
             long hoursDuration = duration.toHours();
-            System.out.println(hoursDuration);
+
 
             Integer threeDays = 72;
             Integer zero = 0;
