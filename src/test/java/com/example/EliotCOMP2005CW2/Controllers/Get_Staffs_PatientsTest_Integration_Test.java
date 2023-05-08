@@ -31,19 +31,18 @@ class Get_Staffs_PatientsTest_Integration_Test {
         allocation1.setId(43);
         allocation1.setAdmissionID(121);
         allocation1.setEmployeeID(40);
-        allocation1.setStartTime("2020-11-28T16:45:00");
-        allocation1.setEndTime("2020-11-28T17:45:00");
+        allocation1.setStartTime("2020-11-28T16:45:00.000Z");
+        allocation1.setEndTime("2020-11-28T17:45:00.000Z");
 
         testAllocations[0] = allocation1;
 
         when(mockGetStaffsPatients.getAllocations()).thenReturn(testAllocations);
 
-        List<Integer> mockList = new ArrayList<>();
-        mockList.add(72);
+        List<Integer> mockPatientIDList = new ArrayList<>();
+        mockPatientIDList.add(72);
 
-        Integer testID = 40;
 
-        when(mockGetStaffsPatients.getPatientIDWithAdmissionID(any())).thenReturn(mockList);
+        when(mockGetStaffsPatients.getPatientIDWithAdmissionID(any())).thenReturn(mockPatientIDList);
 
     }
 
