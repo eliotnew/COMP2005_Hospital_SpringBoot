@@ -32,6 +32,7 @@ class Three_Day_Discharge_ControllerTest {
         Admission[] testAdmissionsArray = new Admission[1];
         testAdmissionsArray[0] = admissionTest;
 
+
         List<Integer> testList = three_day_discharge_controller.getShortStays(testAdmissionsArray);
 
         assertEquals(1,testList.size());

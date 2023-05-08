@@ -45,7 +45,7 @@ public class Get_Staffs_Patients {
             return failList;
         }
     }
-    private Allocation[] getAllocations(){
+    public Allocation[] getAllocations(){
         String url = "https://web.socem.plymouth.ac.uk/COMP2005/api/Allocations";
 
         // apache http client gets the whole table
